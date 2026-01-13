@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: devops-cicd-project:1.0
+          image: ghcr.io/tanmay131099/devops-cicd-project:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           readinessProbe:
