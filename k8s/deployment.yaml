@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-cicd-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-cicd-project
+  template:
+    metadata:
+      labels:
+        app: devops-cicd-project
+    spec:
+      containers:
+        - name: app
+          image: devops-cicd-project:1.0
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
