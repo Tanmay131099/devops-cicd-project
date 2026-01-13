@@ -1,0 +1,31 @@
+name: CD (Deploy to kind in Actions)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.10.0
+        with:
+          cluster_name: devops-lab
+
+      - name: Deploy manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Wait for rollout
+        run: kubectl rollout status deployment/devops-cicd-project --timeout=180s
+
+      - name: Verify /health
+        run: |
+          kubectl port-forward service/devops-cicd-project 8080:80 &
+          sleep 3
+          curl -f http://localhost:8080/health
